@@ -34,9 +34,9 @@ def multiclass_multilable(n_e):
     count = -32
     count_two = 1
 
-    y_p = y_pred.iloc[:, :count]
+    y_p = y_pred.iloc[:, :count].copy()
     y_p.rename(columns={y_p.columns[0]: 'Y'}, inplace=True)
-    y_t = y_test.iloc[:, :count]
+    y_t = y_test.iloc[:, :count].copy()
     y_t.rename(columns={y_t.columns[0]: 'Y'}, inplace=True)
 
     for i in range(31):
@@ -82,9 +82,9 @@ def multiclass_multilable_km():
     count = -32
     count_two = 1
 
-    y_p = y_pred.iloc[:, :count]
+    y_p = y_pred.iloc[:, :count].copy()
     y_p.rename(columns={y_p.columns[0]: 'Y'}, inplace=True)
-    y_t = y_test.iloc[:, :count]
+    y_t = y_test.iloc[:, :count].copy()
     y_t.rename(columns={y_t.columns[0]: 'Y'}, inplace=True)
 
     for i in range(31):
@@ -103,5 +103,5 @@ def multiclass_multilable_km():
 
     accuracy = (tp/(tp+fp))*100
 
-    print('MultiClass Multi-label Model Accuracy:{:.2f}%'.format(accuracy))
+    print('KMeans Model Accuracy:{:.2f}%'.format(accuracy))
     return tp, fp, accuracy

@@ -16,8 +16,8 @@ if __name__ == '__main__':
 
     width = 0.25
 
-    fp = 'r'
-    tp = 'b'
+    fp = 'orangered'
+    tp = 'cadetblue'
 
     p1 = plt.bar(1, fp_mc, width, color=fp)
     p2 = plt.bar(1, tp_mc, width, bottom=fp_mc, color=tp)
@@ -26,9 +26,23 @@ if __name__ == '__main__':
     p5 = plt.bar(3, fp_km, width, color=fp)
     p6 = plt.bar(3, tp_km, width, bottom=fp_km, color=tp)
 
+
+    for rect in p2:
+        height = rect.get_height()
+        plt.text(rect.get_x() + rect.get_width() / 2.0, height,
+                 '{:.2f}%'.format(mc_acc), ha='center')
+    for rect in p4:
+        height = rect.get_height()
+        plt.text(rect.get_x() + rect.get_width() / 2.0, height,
+                 '{:.2f}%'.format(svm_acc), ha='center', va='top')
+    for rect in p6:
+        height = rect.get_height()
+        plt.text(rect.get_x() + rect.get_width() / 2.0, height,
+                 '{:.2f}%'.format(km_acc), ha='center', va='top')
+
     plt.ylabel('Samples')
     plt.title('Model Results')
-    plt.xticks(ind, ('0', 'MC', 'SVM', 'KMeans'))
-    plt.legend((p1, p2, p3, p4, p5, p6), ('fp_mc', 'tp_mc', 'fp_svm', 'tp_svm', 'fp_km', 'tp_km'))
+    plt.xticks(ind, ('0', 'MCML(forest)', 'SVM', 'KMeans'))
+    plt.legend((p1, p2), ('Miss_Classified', 'Correctly_Classified'))
     plt.show()
 

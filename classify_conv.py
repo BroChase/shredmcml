@@ -1,13 +1,13 @@
 import pandas as pd
 
 def classify_convert(x):
-    if 0 <= x <= 80:
+    if 0 <= x <= 50:
         return 1
-    if 80 < x <= 160:
+    if 50 < x <= 100:
         return 2
-    if 160 < x <= 240:
+    if 100 < x <= 150:
         return 3
-    if 240 < x <= 320:
+    if 150 < x <= 320:
         return 4
     if x > 320:
         return 5
@@ -30,6 +30,12 @@ def frame_manip():
     # print max and min for snow
     # print(df.snow.max())
     # print(df.snow.min())
+    fips = []
+    f = 0
+    for i in range(33):
+        num = df.iloc[f:f+1, 0:1].values
+        fips.append(num[0][0])
+        f += 26
     df['FIPS'] = df['FIPS'].astype(float)
     # 0-300 every 60 == class 5 classes 1-6 6 = op
     df['snow'] = df.snow.apply(lambda x: classify_convert(x))
@@ -53,6 +59,6 @@ def frame_manip():
 
     df = pd.concat([df_a, df_b], axis=1)
     # df.to_csv('test.csv')
-    return df
+    return df, fips
 
 

@@ -11,7 +11,7 @@ from sklearn.neighbors import KNeighborsClassifier
 
 def multiclass_multilable(n_e):
 
-    df = classify_conv.frame_manip()
+    df, fips = classify_conv.frame_manip()
     # drop first index column
     df = df.iloc[:, 1:]
     # get x columns
@@ -56,11 +56,16 @@ def multiclass_multilable(n_e):
     accuracy = accuracy_score(y_t, y_p)*100
 
     print('MultiClass Multi-label Model Accuracy:{:.2f}%'.format(accuracy))
-    return tp, fp, accuracy
+    f = pd.DataFrame(fips)
+    p = pd.DataFrame(y_pred.iloc[0:1, :].T)
+
+    f_p = pd.concat([f, p], axis=1)
+
+    return tp, fp, accuracy, f_p
 
 def multiclass_multilable_km():
 
-    df = classify_conv.frame_manip()
+    df, fips = classify_conv.frame_manip()
     # drop first index column
     df = df.iloc[:, 1:]
     # get x columns
@@ -104,4 +109,5 @@ def multiclass_multilable_km():
     accuracy = (tp/(tp+fp))*100
 
     print('KMeans Model Accuracy:{:.2f}%'.format(accuracy))
-    return tp, fp, accuracy
+    p = pd.DataFrame(y_pred.iloc[0:1, :].T)
+    return tp, fp, accuracy, p

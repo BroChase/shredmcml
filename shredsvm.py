@@ -12,7 +12,7 @@ def shred_svm():
     # drop first column
     df = df.iloc[:, 1:]
     # drop any rows with a snow total under 30
-    df = df[df.snow > 30]
+    # df = df[df.snow > 30]
 
     # print max and min for snow
     #print(df.snow.max())
@@ -49,7 +49,7 @@ def shred_svm():
 
     # get predictions
     y_pred = grid_search.predict(x_test)
-
+    y_p = pd.DataFrame(y_pred)
 
     b = y_test.values
 
@@ -59,4 +59,6 @@ def shred_svm():
     # print model accuracy.
     print("SVM Model Accuracy: {:.2f}%".format(accuracy))
 
-    return tp, fp, accuracy
+    p = pd.DataFrame(y_p.iloc[:33, :])
+
+    return tp, fp, accuracy, p

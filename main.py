@@ -2,13 +2,23 @@ import mcml
 import shredsvm
 import numpy as np
 import matplotlib.pyplot as plt
-
+import pandas as pd
 
 if __name__ == '__main__':
 
-    tp_mc, fp_mc, mc_acc = mcml.multiclass_multilable(n_e=10)
-    tp_svm, fp_svm, svm_acc = shredsvm.shred_svm()
-    tp_km, fp_km, km_acc = mcml.multiclass_multilable_km()
+    # true positives, false positives, model accuracy, predictions.
+    tp_mc, fp_mc, mc_acc, f_p = mcml.multiclass_multilable(n_e=1000)
+    tp_svm, fp_svm, svm_acc, svm_p = shredsvm.shred_svm()
+    tp_km, fp_km, km_acc, km_p = mcml.multiclass_multilable_km()
+
+    f_p = f_p.iloc[:, :].values
+    df = pd.DataFrame(f_p, columns=['FIPS', 'MCML'])
+    svm_p = svm_p.iloc[:, :].values
+    df2 = pd.DataFrame(svm_p, columns=['SVM'])
+    km_p = km_p.iloc[:, :].values
+    df3 = pd.DataFrame(km_p, columns=['KMeans'])
+    merged = pd.concat([df, df2, df3], axis=1)
+    merged.to_csv('results.csv', index=False)
 
     N = 4
 

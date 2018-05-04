@@ -1,13 +1,9 @@
 import pandas as pd
-import numpy as np
 import classify_conv
-import matplotlib.pyplot as plt
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
-
-from sklearn.preprocessing import StandardScaler
 
 
 def multiclass_multilable():
@@ -50,4 +46,4 @@ def multiclass_multilable():
         y_p = y_p.append(df_n)
         y_t = y_t.append(df_m)
 
-    print('Accuracy:{:.2f}'.format(accuracy_score(y_t, y_p)*100))
+    print('MultiClass Multi-label Model Accuracy:{:.2f}%'.format(accuracy_score(y_t, y_p)*100))

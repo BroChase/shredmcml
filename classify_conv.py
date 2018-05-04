@@ -12,6 +12,16 @@ def classify_convert(x):
     if x > 320:
         return 5
 
+def tp_fp(y_t, y_p):
+    tp = 0
+    fp = 0
+    for i in range(0, len(y_t)):
+        if y_p[i] == y_t[i]:
+            tp += 1
+        elif y_p[i] != y_t[i]:
+            fp += 1
+    return tp, fp
+
 def frame_manip():
     # load data
     df = pd.read_csv('COsnowtotals.csv')

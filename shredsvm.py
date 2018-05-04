@@ -45,10 +45,18 @@ def shred_svm():
     # use gridsearch to attempt to find best SVC parameters.
     grid_search = GridSearchCV(clf, param_grid=param_grid)
     grid_search.fit(x_train, y_train)
-    print('Best C Params: ', grid_search.best_params_)
+    # print('Best C Params: ', grid_search.best_params_)
 
     # get predictions
     y_pred = grid_search.predict(x_test)
 
+
+    b = y_test.values
+
+    tp, fp = classify_conv.tp_fp(y_pred, b)
+
+    accuracy = grid_search.score(x_test, y_test) * 100
     # print model accuracy.
-    print("SVM Model Accuracy: {:.2f}%".format(grid_search.score(x_test, y_test) * 100))
+    print("SVM Model Accuracy: {:.2f}%".format(accuracy))
+
+    return tp, fp, accuracy

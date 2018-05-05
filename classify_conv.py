@@ -75,8 +75,8 @@ def frame_manip_single_year():
     df['snow'] = df.snow.apply(lambda x: classify_convert(x))
 
     # reorder the columns
-    df = df.reindex(columns=sorted(df.columns))
-    df = df.reindex(columns=(['FIPS'] + list([a for a in df.columns if a != 'FIPS'])))
+    #df = df.reindex(columns=sorted(df.columns))
+    #df = df.reindex(columns=(['FIPS'] + list([a for a in df.columns if a != 'FIPS'])))
     # get the X attributes and Y values
     df_x = df.iloc[:, :-1]
     df_y = df.iloc[:, -1]
@@ -97,4 +97,17 @@ def frame_manip_single_year():
     df = pd.concat([df_a, df_b], axis=1)
     df = df.iloc[:, :].values
     df = pd.DataFrame(df)
+    return df
+
+def single_year():
+    df = pd.read_csv('snowtotals.csv')
+    #df = pd.read_csv('snowtotals.csv')
+    # drop first column
+    df = df.iloc[:, 1:]
+    div = int(df.shape[0]/33)
+    df['FIPS'] = df['FIPS'].astype(float)
+    # 0-300 every 60 == class 5 classes 1-6 6 = op
+    df['snow'] = df.snow.apply(lambda x: classify_convert(x))
+    df = df.iloc[:, :-1]
+
     return df

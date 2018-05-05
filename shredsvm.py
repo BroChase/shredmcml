@@ -61,4 +61,4 @@ def shred_svm():
 
     p = pd.DataFrame(y_p.iloc[:33, :])
 
-    return tp, fp, accuracy, p
+    return tp, fp, accuracy, p, grid_search

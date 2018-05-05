@@ -12,8 +12,6 @@ from sklearn.neighbors import KNeighborsClassifier
 def multiclass_multilable(n_e):
 
     df, fips = classify_conv.frame_manip()
-    # drop first index column
-    df = df.iloc[:, 1:]
     # get x columns
     df_x = df.iloc[:, :-33]
     # get y columns
@@ -31,6 +29,7 @@ def multiclass_multilable(n_e):
 
     y_pred = multi_target_forest.predict(x_test)
     y_pred = pd.DataFrame(y_pred)
+
     count = -32
     count_two = 1
 
@@ -61,13 +60,11 @@ def multiclass_multilable(n_e):
 
     f_p = pd.concat([f, p], axis=1)
 
-    return tp, fp, accuracy, f_p
+    return tp, fp, accuracy, f_p, multi_target_forest
 
 def multiclass_multilable_km():
 
     df, fips = classify_conv.frame_manip()
-    # drop first index column
-    df = df.iloc[:, 1:]
     # get x columns
     df_x = df.iloc[:, :-33]
     # get y columns
@@ -79,7 +76,7 @@ def multiclass_multilable_km():
     x_train, x_test, y_train, y_test = train_test_split(df_x, df_y, test_size=.20)
 
     # try 10000 82%
-    neigh = KNeighborsClassifier(n_neighbors=10)
+    neigh = KNeighborsClassifier(n_neighbors=20)
     neigh.fit(x_train, y_train)
 
     y_pred = neigh.predict(x_test)
@@ -110,4 +107,4 @@ def multiclass_multilable_km():
 
     print('KMeans Model Accuracy:{:.2f}%'.format(accuracy))
     p = pd.DataFrame(y_pred.iloc[0:1, :].T)
-    return tp, fp, accuracy, p
+    return tp, fp, accuracy, p, neigh

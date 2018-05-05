@@ -4,26 +4,43 @@ import classify_conv
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+from sklearn.preprocessing import StandardScaler
+
 
 if __name__ == '__main__':
 
-
-    classify_conv.frame_manip_single_year()
     # true positives, false positives, model accuracy, predictions.
-    tp_mc, fp_mc, mc_acc, f_p = mcml.multiclass_multilable(n_e=1000)
-    tp_svm, fp_svm, svm_acc, svm_p = shredsvm.shred_svm()
-    tp_km, fp_km, km_acc, km_p = mcml.multiclass_multilable_km()
+    tp_mc, fp_mc, mc_acc, f_p, forest_model = mcml.multiclass_multilable(n_e=100)
+    tp_km, fp_km, km_acc, km_p, kmeans_model = mcml.multiclass_multilable_km()
+    tp_svm, fp_svm, svm_acc, svm_p, svm_model = shredsvm.shred_svm()
 
+    df = classify_conv.frame_manip_single_year()
 
+    # get x columns
+    df_x = df.iloc[:, :-33]
+    # get y columns
+    df_y = df.iloc[:, -33:]
+    scaler = StandardScaler()
+    df_x = scaler.fit_transform(df_x)
 
+    y_pred_forest = forest_model.predict(df_x)
 
-    f_p = f_p.iloc[:, :].values
-    df = pd.DataFrame(f_p, columns=['FIPS', 'MCML'])
-    svm_p = svm_p.iloc[:, :].values
-    df2 = pd.DataFrame(svm_p, columns=['SVM'])
-    km_p = km_p.iloc[:, :].values
-    df3 = pd.DataFrame(km_p, columns=['KMeans'])
-    merged = pd.concat([df, df2, df3], axis=1)
+    y_pred_kmeans = kmeans_model.predict(df_x)
+
+    svm_x = classify_conv.single_year()
+    svm_x = scaler.fit_transform(svm_x)
+    y_pred_svm = svm_model.predict(svm_x)
+
+    f_p = f_p.iloc[:, :-1].values
+    df = pd.DataFrame(f_p, columns=['FIPS'])
+
+    df1 = pd.DataFrame(y_pred_forest.T, columns=['MCML'])
+
+    df2 = pd.DataFrame(y_pred_kmeans.T, columns=['KMeans'])
+
+    df3 = pd.DataFrame(y_pred_svm.T, columns=['SVM'])
+
+    merged = pd.concat([df, df1, df2, df3], axis=1)
     merged.to_csv('results.csv', index=False)
 
     N = 4
@@ -61,4 +78,11 @@ if __name__ == '__main__':
     plt.xticks(ind, ('0', 'MCML(forest)', 'SVM', 'KMeans'))
     plt.legend((p1, p2), ('Miss_Classified', 'Correctly_Classified'))
     plt.show()
+
+    sales = [('MCML', tp_mc, fp_mc, mc_acc),
+             ('Kmeans', tp_km, fp_km, km_acc),
+             ('SVM', tp_svm, fp_svm, svm_acc)]
+    labels = ['Model', 'Correctly_clf', 'Miss_clf', 'Accuracy']
+    df = pd.DataFrame.from_records(sales, columns=labels)
+    df.to_csv('modelresults.csv', index=False)
 

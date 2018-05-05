@@ -25,6 +25,7 @@ def tp_fp(y_t, y_p):
 def frame_manip():
     # load data
     df = pd.read_csv('COsnowtotals.csv')
+    #df = pd.read_csv('snowtotals.csv')
     # drop first column
     df = df.iloc[:, 1:]
     # print max and min for snow
@@ -32,10 +33,11 @@ def frame_manip():
     # print(df.snow.min())
     fips = []
     f = 0
+    div = int(df.shape[0]/33)
     for i in range(33):
         num = df.iloc[f:f+1, 0:1].values
         fips.append(num[0][0])
-        f += 26
+        f += div
     df['FIPS'] = df['FIPS'].astype(float)
     # 0-300 every 60 == class 5 classes 1-6 6 = op
     df['snow'] = df.snow.apply(lambda x: classify_convert(x))
@@ -44,16 +46,16 @@ def frame_manip():
     df_x = df.iloc[:, :-1]
     df_y = df.iloc[:, -1]
 
-    count = 26
+    count = div
     df_a = df_x.iloc[:count, :]
     df_b = df_y.iloc[:count]
 
-    r = int(df_x.shape[0] / 26)
+    r = int(df_x.shape[0] / div)
 
     for i in range(r-1):
-        df_n = df_x.iloc[count:(count+26), :].reset_index(drop=True)
-        df_m = df_y.iloc[count:(count+26)].reset_index(drop=True)
-        count += 26
+        df_n = df_x.iloc[count:(count+div), :].reset_index(drop=True)
+        df_m = df_y.iloc[count:(count+div)].reset_index(drop=True)
+        count += div
         df_a = pd.concat([df_a, df_n], axis=1)
         df_b = pd.concat([df_b, df_m], axis=1)
 
@@ -61,4 +63,38 @@ def frame_manip():
     # df.to_csv('test.csv')
     return df, fips
 
+def frame_manip_single_year():
+    # load data
+    df = pd.read_csv('snowtotals.csv')
+    #df = pd.read_csv('snowtotals.csv')
+    # drop first column
+    df = df.iloc[:, 1:]
+    div = int(df.shape[0]/33)
+    df['FIPS'] = df['FIPS'].astype(float)
+    # 0-300 every 60 == class 5 classes 1-6 6 = op
+    df['snow'] = df.snow.apply(lambda x: classify_convert(x))
 
+    # reorder the columns
+    df = df.reindex(columns=sorted(df.columns))
+    df = df.reindex(columns=(['FIPS'] + list([a for a in df.columns if a != 'FIPS'])))
+    # get the X attributes and Y values
+    df_x = df.iloc[:, :-1]
+    df_y = df.iloc[:, -1]
+
+    count = div
+    df_a = df_x.iloc[:count, :]
+    df_b = df_y.iloc[:count]
+
+    r = int(df_x.shape[0] / div)
+
+    for i in range(r-1):
+        df_n = df_x.iloc[count:(count+div), :].reset_index(drop=True)
+        df_m = df_y.iloc[count:(count+div)].reset_index(drop=True)
+        count += div
+        df_a = pd.concat([df_a, df_n], axis=1)
+        df_b = pd.concat([df_b, df_m], axis=1)
+
+    df = pd.concat([df_a, df_b], axis=1)
+    df = df.iloc[:, :].values
+    df = pd.DataFrame(df)
+    return df

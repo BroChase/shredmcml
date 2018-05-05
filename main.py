@@ -1,15 +1,21 @@
 import mcml
 import shredsvm
+import classify_conv
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
 if __name__ == '__main__':
 
+
+    classify_conv.frame_manip_single_year()
     # true positives, false positives, model accuracy, predictions.
     tp_mc, fp_mc, mc_acc, f_p = mcml.multiclass_multilable(n_e=1000)
     tp_svm, fp_svm, svm_acc, svm_p = shredsvm.shred_svm()
     tp_km, fp_km, km_acc, km_p = mcml.multiclass_multilable_km()
+
+
+
 
     f_p = f_p.iloc[:, :].values
     df = pd.DataFrame(f_p, columns=['FIPS', 'MCML'])

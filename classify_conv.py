@@ -1,5 +1,7 @@
 import pandas as pd
 
+# used to classify what 'we' think is good snow totals
+# for a skier
 def classify_convert(x):
     if 0 <= x <= 50:
         return 1
@@ -12,6 +14,8 @@ def classify_convert(x):
     if x > 320:
         return 5
 
+
+# clculate how many true classified/false classified
 def tp_fp(y_t, y_p):
     tp = 0
     fp = 0
@@ -22,9 +26,10 @@ def tp_fp(y_t, y_p):
             fp += 1
     return tp, fp
 
+# Manipulate the data into the frame needed for training specific models
 def frame_manip():
     # load data
-    df = pd.read_csv('COsnowtotals.csv')
+    df = pd.read_csv('snowtotals_multi.csv')
     #df = pd.read_csv('snowtotals.csv')
     # drop first column
     df = df.iloc[:, 1:]
@@ -33,8 +38,9 @@ def frame_manip():
     # print(df.snow.min())
     fips = []
     f = 0
-    div = int(df.shape[0]/33)
-    for i in range(33):
+    # todo 238
+    div = int(df.shape[0]/238)
+    for i in range(238):
         num = df.iloc[f:f+1, 0:1].values
         fips.append(num[0][0])
         f += div
@@ -60,16 +66,19 @@ def frame_manip():
         df_b = pd.concat([df_b, df_m], axis=1)
 
     df = pd.concat([df_a, df_b], axis=1)
+    df = df.iloc[:, :].values
+    df = pd.DataFrame(df)
     # df.to_csv('test.csv')
     return df, fips
 
 def frame_manip_single_year():
     # load data
-    df = pd.read_csv('snowtotals.csv')
+    df = pd.read_csv('snowtotals_2.csv')
     #df = pd.read_csv('snowtotals.csv')
     # drop first column
     df = df.iloc[:, 1:]
-    div = int(df.shape[0]/33)
+    # todo 238
+    div = int(df.shape[0]/238)
     df['FIPS'] = df['FIPS'].astype(float)
     # 0-300 every 60 == class 5 classes 1-6 6 = op
     df['snow'] = df.snow.apply(lambda x: classify_convert(x))
@@ -99,15 +108,23 @@ def frame_manip_single_year():
     df = pd.DataFrame(df)
     return df
 
-def single_year():
-    df = pd.read_csv('snowtotals.csv')
-    #df = pd.read_csv('snowtotals.csv')
-    # drop first column
-    df = df.iloc[:, 1:]
-    div = int(df.shape[0]/33)
-    df['FIPS'] = df['FIPS'].astype(float)
-    # 0-300 every 60 == class 5 classes 1-6 6 = op
-    df['snow'] = df.snow.apply(lambda x: classify_convert(x))
-    df = df.iloc[:, :-1]
 
-    return df
+# manipulate the dataframe that is passed in to format for use with the svm model
+def single_year(df):
+    df = pd.DataFrame(df)
+    # div = number of features belonging to each FIPS todo 238
+    div = int(df.shape[1]/238)
+    count = 0
+    di = div
+    # create a new frame to append to
+    new_df = df.iloc[:, count:div].values
+    new_df = pd.DataFrame(new_df)
+    # append all the frame creating a columnwise frame. todo 237
+    for i in range(237):
+        count += di
+        div += di
+        df_n = df.iloc[:, count:div].values
+        df_n = pd.DataFrame(df_n)
+        new_df = new_df.append(df_n, ignore_index=True)
+
+    return new_df

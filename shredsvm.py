@@ -8,7 +8,7 @@ from sklearn.multiclass import OneVsRestClassifier
 
 def shred_svm():
     # load data
-    df = pd.read_csv('COsnowtotals.csv')
+    df = pd.read_csv('snowtotals_multi.csv')
     # drop first column
     df = df.iloc[:, 1:]
     # drop any rows with a snow total under 30
@@ -37,9 +37,9 @@ def shred_svm():
     clf = OneVsRestClassifier(SVC(kernel='rbf', cache_size=1000))
 
     # C grid search param
-    C_range = [.001, .01, .1, 1, 10, 100, 1000]
+    C_range = [10] # tested with ranged from .01, .1, 1, 10, 100
     # gamma grid search param
-    GAMMA_range = [.001, .01, .1, 1, 10, 100, 1000]
+    GAMMA_range = [.1] # tested with range from .01, .1, 1, 10, 100
     param_grid = {'estimator__C': C_range,
                   'estimator__gamma': GAMMA_range}
     # use gridsearch to attempt to find best SVC parameters.
@@ -58,7 +58,7 @@ def shred_svm():
     accuracy = grid_search.score(x_test, y_test) * 100
     # print model accuracy.
     print("SVM Model Accuracy: {:.2f}%".format(accuracy))
-
-    p = pd.DataFrame(y_p.iloc[:33, :])
+    #todo 238
+    p = pd.DataFrame(y_p.iloc[:238, :])
 
     return tp, fp, accuracy, p, grid_search
